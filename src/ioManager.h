@@ -12,7 +12,7 @@
 #include "WProgram.h"
 
 #endif
-#ifdef esp32dev
+#ifdef ESP32
 #include <wifi.h>
 #else
 #include <ESP8266WiFi.h>
