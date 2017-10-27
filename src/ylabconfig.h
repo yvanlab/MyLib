@@ -46,5 +46,8 @@
 
 #endif
 
+#define VMC_METEO_IP_PROD             "192.168.0.110"
+#define CURRENT_IP_PROD               "192.168.0.120"
+#define MATRIX_DISPLAY_IP_PROD        "192.168.0.100"
 
 #endif

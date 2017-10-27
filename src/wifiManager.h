@@ -19,6 +19,9 @@
 #else
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
+extern "C" {
+  #include "user_interface.h"
+}
 #endif
 #include "BaseManager.h"
 class WifiManager  : public BaseManager
@@ -28,13 +31,13 @@ class WifiManager  : public BaseManager
     WifiManager(unsigned char pinLed);
     String toString(boolean bJson);
     //unsigned char connectSSID();
-    unsigned char connectSSID(char *ssid, char *pass, IPAddress ip, const char *MDNS_LABEL);
+    wl_status_t connectSSID(char *ssid, char *pass, IPAddress ip, const char *MDNS_LABEL);
     unsigned char connectAP(const char *MDNS_LABEL);
 
     String getClassName(){return "WifiManager";}
 
   private:
-
+    wl_status_t begin(char *ssid, char *pass);
 
 
 };

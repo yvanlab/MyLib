@@ -17,16 +17,30 @@
 
 #include "ylabconfig.h"
 
+#ifdef MCPOC_TELNET
+#include "RemoteDebug.h"
+extern RemoteDebug Debug;
+#endif
+
 #define JSON_TEXT true
 #define STD_TEXT false
 
+#define STATUS_PERIPHERIC_DOWN 0
+#define STATUS_PERIPHERIC_PARTIAL 1
+#define STATUS_PERIPHERIC_WORKING 2
 
+#ifdef MCPOC_TELNET
+#define DBG_PORT Debug
+#else
 #define DBG_PORT Serial
+#endif
 
 #ifdef MCPOC_TEST
 #define DEBUGLOG(...) DBG_PORT.println(__VA_ARGS__)
+#define DEBUGLOGF(...) DBG_PORT.printf(__VA_ARGS__)
 #else
 #define DEBUGLOG(...)
+#define DEBUGLOGF(...)
 #endif
 
 

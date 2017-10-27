@@ -19,7 +19,7 @@
 #include <ESP8266WiFiType.h>
 
 #include <Wire.h>
-#include <RTClib.h>
+//#include <RTClib.h>
 #include "BaseManager.h"
 
 class HourManager : /*public NTPClient, */public BaseManager
