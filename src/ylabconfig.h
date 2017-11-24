@@ -5,6 +5,7 @@
 #define MODULE_UPDATE_LOGIN "leheros"
 #define MODULE_UPDATE_PASS "leheros1097"
 #define HIDDEN_KEY "*****"
+#define MODULE_AP_WPA ((const char *)"testWPA1097")
 
 #ifdef MCPOC_TEST
 

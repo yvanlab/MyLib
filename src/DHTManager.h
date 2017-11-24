@@ -16,6 +16,8 @@
 #include "BaseManager.h"
 
 
+
+
 class DHTManager : public DHT , public BaseManager
 {
 
@@ -28,11 +30,17 @@ class DHTManager : public DHT , public BaseManager
 
     float getTemperature();
     float getHumidity();
+    float getHumidityTrend() {return m_Humidity.m_trend;};
+    float getTemperatureTrend(){return m_Temperature.m_trend;};
+
     String getClassName(){return "DHTManager";}
 
-  private:
+  //private:
     //DHT  m_DHT;
-    //uint8_t m_pinDHT;
+    capteurValue  m_Humidity;
+    capteurValue  m_Temperature;
+
+
     //int8_t read();
 
 };
