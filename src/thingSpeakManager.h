@@ -37,8 +37,8 @@ class thingSpeakManager : public BaseManager
   public:
 
     thingSpeakManager( unsigned char pinLed);
-    
-    unsigned char sendIoT(String privateKey, String publicKey);
+
+    int sendIoT(String privateKey, String publicKey);
 
     String toString(boolean bJson);
     void addVariable(uint8_t index, String value);

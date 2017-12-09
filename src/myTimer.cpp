@@ -1,7 +1,7 @@
 
 
 #include "myTimer.h"
-#include "context.h"
+//#include "context.h"
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -30,7 +30,7 @@ void  timerCallback(void *pArg) {
      if ((mtTimer.periodCPT % MOD_5MN) == 0)     {mtTimer.period |= PERIOD_5MN  ;mtTimer.frequence ^= PERIOD_5MN;}
      if ((mtTimer.periodCPT % MOD_30MN) == 0)    {mtTimer.period |= PERIOD_30MN ;mtTimer.frequence ^= PERIOD_30MN;}
      if ((mtTimer.periodCPT % mtTimer.MOD_custom) == 0)  {mtTimer.period |= PERIOD_CUSTOM;mtTimer.frequence ^= PERIOD_CUSTOM;}
-     matrix.displayScreen();
+     //matrix.displayScreen();
 } // End of timerCallback
 
 void MyTimer::begin(uint32_t freqMS){

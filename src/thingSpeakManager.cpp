@@ -19,7 +19,7 @@ void thingSpeakManager::addVariable(uint8_t index, String value) {
   m_index++;
 }
 
-unsigned char thingSpeakManager::sendIoT(String privateKey/*ChannelNumber*/, String publicKey /*WriteAPIKey*/) {
+int thingSpeakManager::sendIoT(String privateKey/*ChannelNumber*/, String publicKey /*WriteAPIKey*/) {
   switchOn();
 
   uint8_t i = 0;
@@ -31,9 +31,13 @@ unsigned char thingSpeakManager::sendIoT(String privateKey/*ChannelNumber*/, Str
 
   m_index = 0;
   //DEBUGLOGF("private:%d public:%s\n",atol(privateKey.c_str()),publicKey.c_str() );
-  ThingSpeak.writeFields(atol(privateKey.c_str()), publicKey.c_str());
+  int res = ThingSpeak.writeFields(atol(privateKey.c_str()), publicKey.c_str());
+  if (res != OK_SUCCESS)
+    setStatus(res, F("fail to connect ThingSpeak"));
+  else
+    setStatus(res, F("Ok"));
   switchOff();
-  return 0;
+  return res;
 }
 
 String thingSpeakManager::toString(boolean bJson = false) {

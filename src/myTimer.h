@@ -13,7 +13,7 @@
 
 #endif
 
-#include "BaseManager.h"
+#include <BaseManager.h>
 
 extern "C" {
 #include "user_interface.h"
@@ -31,7 +31,7 @@ extern "C" {
 #define PERIOD_CUSTOM 0b10000000
 
 
-#define timerFrequence  (uint32_t)5 //60000;//ms
+#define timerFrequence  (uint32_t)25 //60000;//ms
 #define MOD_25MS (uint32_t)(25/timerFrequence)
 #define MOD_250MS (uint32_t)(250/timerFrequence)
 #define MOD_1S (uint32_t)(1000/timerFrequence)

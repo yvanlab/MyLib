@@ -48,14 +48,12 @@ public:
   capteurValue(){}
 
   void set(float value) {
-    if (m_time==0) {
-      m_trend = 0 ;
-    }
-    m_trend = (m_value - value);/*/(m_time - millis())*/
+    if (m_time==0) m_trend = 0 ;
+    else m_trend = (100*(value - m_value))( millis() - m_time);
     m_time  = millis();
     m_value = value;
   }
-  
+
   uint32_t m_time = 0;
   float m_value = 0;
   float m_trend = 0;
