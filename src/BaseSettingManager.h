@@ -32,7 +32,7 @@ class BaseSettingManager : public BaseManager
     String getClassName(){return "BaseSettingManager";}
   protected:
     unsigned char writeEEPROM(char *str);
-    unsigned char readEEPROM(char *str);
+    unsigned char readEEPROM(char *str,uint8_t maxChar);
   private:
     int m_iEEprom = 0;
 };

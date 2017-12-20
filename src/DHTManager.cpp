@@ -18,13 +18,13 @@ DHTManager::DHTManager( unsigned char pinDHT,unsigned char pinLed)
 
 String DHTManager::toString(boolean bJson = STD_TEXT) {
   if (bJson==JSON_TEXT)
-    return  "\"dhtTemp\":\""+String (getTemperature()) +
+    return  "\"dhtTemp\":\""+String (getLastTemperature()) +
             "\", \"dhtTempTrend\":\"" + String(getTemperatureTrend())+"\""+
-            ", \"dhtHum\":\"" + String(getHumidity())+"\""+
+            ", \"dhtHum\":\"" + String(getLastHumidity())+"\""+
             ", \"dhtHumTrend\":\"" + String(getHumidityTrend())+"\""+
             ", \"dhtStatus\":\"" + getStatusString() +"\"";// - Status ["+getStatusString()+"]";
   else
-    return "Temperature["+String (getTemperature()) + "][" +String(getTemperatureTrend()) + "] - Humidity[" + String(getHumidity())+"][" +String(getHumidityTrend()) +"] - Status ["+getStatusString()+"]";
+    return "Temperature["+String (getLastTemperature()) + "][" +String(getTemperatureTrend()) + "] - Humidity[" + String(getLastHumidity())+"][" +String(getHumidityTrend()) +"] - Status ["+getStatusString()+"]";
 }
 
 float DHTManager::getTemperature() {

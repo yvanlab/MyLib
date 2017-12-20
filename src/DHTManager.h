@@ -32,6 +32,8 @@ class DHTManager : public DHT , public BaseManager
     float getHumidity();
     float getHumidityTrend() {return m_Humidity.m_trend;};
     float getTemperatureTrend(){return m_Temperature.m_trend;};
+    float getLastTemperature(){return m_Temperature.m_value;};
+    float getLastHumidity(){return m_Humidity.m_value;};
 
     String getClassName(){return "DHTManager";}
 

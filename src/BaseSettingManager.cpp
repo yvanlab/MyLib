@@ -20,10 +20,10 @@ String BaseSettingManager:: toString(boolean bJson = false){
 unsigned char BaseSettingManager::readData(){
   switchOn();
   m_iEEprom=0;
-  readEEPROM(m_ssid);
-  readEEPROM(m_password);
-  readEEPROM(m_privateKey);
-  readEEPROM(m_publicKey);
+  readEEPROM(m_ssid,32);
+  readEEPROM(m_password,64);
+  readEEPROM(m_privateKey,64);
+  readEEPROM(m_publicKey,64);
   setStatus(millis(), m_iEEprom, "read");
   switchOff();
 }
@@ -60,10 +60,10 @@ unsigned char BaseSettingManager::writeEEPROM(char *str){
   m_iEEprom++;
 }
 
-unsigned char BaseSettingManager::readEEPROM(char *str){
+unsigned char BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
   int iString = 0;
-
-  while (iString < 512) {
+  //Serial.print("Read  ============= ");Serial.println(m_iEEprom);
+  while (iString < maxChar) {
     str[iString] = EEPROM.read(m_iEEprom);
     //Serial.print(m_iEEprom);Serial.print(":");
     m_iEEprom++;
