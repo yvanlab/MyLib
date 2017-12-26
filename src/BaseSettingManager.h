@@ -31,10 +31,15 @@ class BaseSettingManager : public BaseManager
     unsigned char clearData();
     String getClassName(){return "BaseSettingManager";}
   protected:
-    unsigned char writeEEPROM(char *str);
-    unsigned char readEEPROM(char *str,uint8_t maxChar);
+    uint8_t writeEEPROM(int16_t value);
+    uint8_t writeEEPROM(char *str);
+    char* readEEPROM(char *str,uint8_t maxChar);
+    int16_t readEEPROM();
+    uint8_t m_version = 0;
   private:
     int m_iEEprom = 0;
+
+
 };
 
 #endif

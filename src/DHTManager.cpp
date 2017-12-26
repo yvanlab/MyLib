@@ -27,7 +27,7 @@ String DHTManager::toString(boolean bJson = STD_TEXT) {
     return "Temperature["+String (getLastTemperature()) + "][" +String(getTemperatureTrend()) + "] - Humidity[" + String(getLastHumidity())+"][" +String(getHumidityTrend()) +"] - Status ["+getStatusString()+"]";
 }
 
-float DHTManager::getTemperature() {
+float DHTManager::mesureTemperature(){
   switchOn();
   #if defined(MCPOC_MOCK)
   float res = random(40);
@@ -37,12 +37,23 @@ float DHTManager::getTemperature() {
   setStatus( getStatus(),getStatusString());
   #endif
 
-  m_Temperature.set(res);
+  m_Temperature.mesure(res);
   switchOff();
   return res;
+
 }
 
-float DHTManager::getHumidity(){
+
+float DHTManager::getTemperature() {
+  if (m_Temperature.m_nbreMeasure == 0) mesureTemperature();
+  m_Temperature.set();
+  return m_Temperature.m_value;
+}
+
+
+
+
+float DHTManager::mesureHumidity(){
   switchOn();
   #if defined(MCPOC_MOCK)
   float res = random(100);
@@ -52,7 +63,13 @@ float DHTManager::getHumidity(){
   setStatus( getStatus(),getStatusString());
   #endif
 
-  m_Humidity.set(res);
+  m_Humidity.mesure(res);
   switchOff();
   return res;
+}
+
+float DHTManager::getHumidity(){
+  if (m_Humidity.m_nbreMeasure == 0) mesureHumidity();
+  m_Humidity.set();
+  return m_Humidity.m_value;
 }

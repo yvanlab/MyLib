@@ -27,7 +27,8 @@ class DHTManager : public DHT , public BaseManager
     DHTManager(unsigned char pinDHT,unsigned char pinLed);
 
     String toString(boolean bJson);
-
+    float mesureTemperature();
+    float mesureHumidity();
     float getTemperature();
     float getHumidity();
     float getHumidityTrend() {return m_Humidity.m_trend;};

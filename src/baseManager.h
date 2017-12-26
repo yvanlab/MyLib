@@ -47,16 +47,32 @@ class capteurValue {
 public:
   capteurValue(){}
 
-  void set(float value) {
-    if (m_time==0) m_trend = 0 ;
-    else m_trend = (100*(value - m_value))( millis() - m_time);
-    m_time  = millis();
+  void mesure(float value) {
+    m_cumulValue += value;
+    m_nbreMeasure ++;
+
+  }
+
+  void set(/*float value*/) {
+    float value = m_cumulValue/m_nbreMeasure;
+    DEBUGLOGF("nb mesur %d/n",m_nbreMeasure );
+    m_nbreMeasure = 0;
+    m_cumulValue = 0;
+    if (m_time==0)
+      m_trend = 0;
+    else
+      m_trend = (100*(value - m_value))/( millis()/1000 - m_time);
+    m_time  = millis()/1000;
     m_value = value;
+
   }
 
   uint32_t m_time = 0;
   float m_value = 0;
   float m_trend = 0;
+
+  float  m_cumulValue = 0;
+  uint8_t m_nbreMeasure = 0;
 };
 
 class BaseManager

@@ -14,22 +14,32 @@ BaseSettingManager::BaseSettingManager(unsigned char pinLed) : BaseManager(pinLe
 }
 
 String BaseSettingManager:: toString(boolean bJson = false){
-  return "SSID[" + String(m_ssid) + "] PASS[" + m_password + "] privateKey[" + m_privateKey + "] publicKey[" + m_publicKey + "]";
+  return "VER["+ String(m_version) + "] SSID[" + String(m_ssid) + "] PASS[" + m_password + "] privateKey[" + m_privateKey + "] publicKey[" + m_publicKey + "]";
 }
 
-unsigned char BaseSettingManager::readData(){
+uint8_t BaseSettingManager::readData(){
   switchOn();
-  m_iEEprom=0;
+  m_iEEprom = 0;
+  m_version = readEEPROM();
+  if (m_version != EEPROM_VERSION) {
+    //m_iEEprom = 0;
+    //m_version = EEPROM_VERSION;
+    setStatus(millis(), m_iEEprom, "dif ver");
+    Serial.printf("Version dif [%d,%d]/d",m_version,EEPROM_VERSION);
+  } else {
+    setStatus(millis(), m_iEEprom, "Ok");
+  }
   readEEPROM(m_ssid,32);
   readEEPROM(m_password,64);
   readEEPROM(m_privateKey,64);
   readEEPROM(m_publicKey,64);
-  setStatus(millis(), m_iEEprom, "read");
+  //setStatus(millis(), m_iEEprom, "read");
   switchOff();
 }
-unsigned char BaseSettingManager::writeData(){
+uint8_t BaseSettingManager::writeData(){
   switchOn();
   m_iEEprom=0;
+  writeEEPROM(EEPROM_VERSION);
   writeEEPROM(m_ssid);
   writeEEPROM(m_password);
   writeEEPROM(m_privateKey);
@@ -39,7 +49,7 @@ unsigned char BaseSettingManager::writeData(){
   switchOff();
 }
 
-unsigned char BaseSettingManager::clearData(){
+uint8_t BaseSettingManager::clearData(){
   switchOn();
   for (int i = 0; i < 512; ++i) {
     EEPROM.write(i, 0);
@@ -48,19 +58,38 @@ unsigned char BaseSettingManager::clearData(){
   switchOff();
 }
 
-unsigned char BaseSettingManager::writeEEPROM(char *str){
+uint8_t BaseSettingManager::writeEEPROM(int16_t value){
+  char tmp[5];
+  itoa(value,tmp,16);
+  /*Serial.print(m_iEEprom);Serial.print(":");Serial.print(value);
+  Serial.print(" , "); Serial.println(tmp);*/
+  return writeEEPROM(tmp);
+}
+
+uint8_t BaseSettingManager::writeEEPROM(char *str){
   for (int iString = 0; str[iString] != 0; iString++,m_iEEprom++ )  {
     EEPROM.write(m_iEEprom, str[iString]);
-    delay(50);
+    //delay(5);
     //Serial.print(m_iEEprom);Serial.print(":");DEBUGLOG(str[iString]);
   }
-  delay(50);
+  //delay(5);
   EEPROM.write(m_iEEprom,0);
   //Serial.print(m_iEEprom);DEBUGLOG(":--");
   m_iEEprom++;
+  return 0;
 }
 
-unsigned char BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
+int16_t BaseSettingManager::readEEPROM(){
+  char tmp[8];
+  readEEPROM(tmp,5);
+  /*Serial.print(m_iEEprom);Serial.print(":");Serial.print(tmp);
+  Serial.print(" , "); Serial.println(strtol(tmp, NULL,16));*/
+  return strtol(tmp, NULL,16);
+
+
+}
+
+char *BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
   int iString = 0;
   //Serial.print("Read  ============= ");Serial.println(m_iEEprom);
   while (iString < maxChar) {
@@ -74,7 +103,7 @@ unsigned char BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
       DEBUGLOG(str[iString]);
     }*/
     iString++;
-    delay(50);
+    //delay(50);
   }
 
 }
