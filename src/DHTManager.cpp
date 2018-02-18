@@ -12,22 +12,22 @@
 DHTManager::DHTManager( unsigned char pinDHT,unsigned char pinLed)
   : BaseManager(pinLed) {
   //m_pinDHT=pinDHT;
-  setup(pinDHT,DHT::AUTO_DETECT);
+  DHT::setup(pinDHT,DHT::AUTO_DETECT);
 }
 
 
 String DHTManager::toString(boolean bJson = STD_TEXT) {
   if (bJson==JSON_TEXT)
-    return  "\"dhtTemp\":\""+String (getLastTemperature()) +
+    return  "\"dhtTemp\":\""+String (getTemperature()) +
             "\", \"dhtTempTrend\":\"" + String(getTemperatureTrend())+"\""+
-            ", \"dhtHum\":\"" + String(getLastHumidity())+"\""+
+            ", \"dhtHum\":\"" + String(getHumidity())+"\""+
             ", \"dhtHumTrend\":\"" + String(getHumidityTrend())+"\""+
             ", \"dhtStatus\":\"" + getStatusString() +"\"";// - Status ["+getStatusString()+"]";
   else
-    return "Temperature["+String (getLastTemperature()) + "][" +String(getTemperatureTrend()) + "] - Humidity[" + String(getLastHumidity())+"][" +String(getHumidityTrend()) +"] - Status ["+getStatusString()+"]";
+    return "Temperature["+String (getTemperature()) + "][" +String(getTemperatureTrend()) + "] - Humidity[" + String(getHumidity())+"][" +String(getHumidityTrend()) +"] - Status ["+getStatusString()+"]";
 }
 
-float DHTManager::mesureTemperature(){
+float DHTManager::getTemperature() {
   switchOn();
   #if defined(MCPOC_MOCK)
   float res = random(40);
@@ -40,20 +40,9 @@ float DHTManager::mesureTemperature(){
   m_Temperature.mesure(res);
   switchOff();
   return res;
-
 }
 
-
-float DHTManager::getTemperature() {
-  if (m_Temperature.m_nbreMeasure == 0) mesureTemperature();
-  m_Temperature.set();
-  return m_Temperature.m_value;
-}
-
-
-
-
-float DHTManager::mesureHumidity(){
+float DHTManager::getHumidity(){
   switchOn();
   #if defined(MCPOC_MOCK)
   float res = random(100);
@@ -66,10 +55,4 @@ float DHTManager::mesureHumidity(){
   m_Humidity.mesure(res);
   switchOff();
   return res;
-}
-
-float DHTManager::getHumidity(){
-  if (m_Humidity.m_nbreMeasure == 0) mesureHumidity();
-  m_Humidity.set();
-  return m_Humidity.m_value;
 }

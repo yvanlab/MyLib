@@ -22,7 +22,7 @@ uint8_t BaseSettingManager::readData(){
   m_iEEprom = 0;
   m_version = readEEPROM();
   if (m_version != EEPROM_VERSION) {
-    //m_iEEprom = 0;
+    m_iEEprom = 0;
     //m_version = EEPROM_VERSION;
     setStatus(millis(), m_iEEprom, "dif ver");
     Serial.printf("Version dif [%d,%d]/d",m_version,EEPROM_VERSION);

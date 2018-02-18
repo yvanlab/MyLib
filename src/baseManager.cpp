@@ -11,14 +11,15 @@
 BaseManager::BaseManager(unsigned char pinLed){
   m_pinLed = pinLed;
   m_changed = true;
-  pinMode ( m_pinLed, OUTPUT );
+  if (m_pinLed!=0)
+    pinMode ( m_pinLed, OUTPUT );
 }
 
 void BaseManager::switchOn(){
-  digitalWrite ( m_pinLed, LOW );
+  if (m_pinLed!=0) digitalWrite ( m_pinLed, LOW );
 }
 void BaseManager::switchOff(){
-  digitalWrite ( m_pinLed, HIGH );
+  if (m_pinLed!=0) digitalWrite ( m_pinLed, HIGH );
 }
 
 /*

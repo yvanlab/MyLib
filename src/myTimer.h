@@ -13,7 +13,7 @@
 
 #endif
 
-#include <BaseManager.h>
+#include "BaseManager.h"
 
 extern "C" {
 #include "user_interface.h"
@@ -28,16 +28,20 @@ extern "C" {
 #define PERIOD_1MN    0b00001000
 #define PERIOD_5MN    0b00010000
 #define PERIOD_30MN   0b01000000
+#define PERIOD_1H     0b00000011
+#define PERIOD_24H    0b01000010
 #define PERIOD_CUSTOM 0b10000000
 
 
-#define timerFrequence  (uint32_t)25 //60000;//ms
-#define MOD_25MS (uint32_t)(25/timerFrequence)
-#define MOD_250MS (uint32_t)(250/timerFrequence)
-#define MOD_1S (uint32_t)(1000/timerFrequence)
-#define MOD_1MN (uint32_t)((60*1000)/timerFrequence)
-#define MOD_5MN (uint32_t)((5*60*1000)/timerFrequence)
-#define MOD_30MN (uint32_t)((30*60*1000)/timerFrequence)
+#define timerFrequence  (uint32_t)5 //60000;//ms
+#define MOD_25MS        (uint32_t)(25/timerFrequence)
+#define MOD_250MS       (uint32_t)(250/timerFrequence)
+#define MOD_1S          (uint32_t)(1000/timerFrequence)
+#define MOD_1MN         (uint32_t)((60*1000)/timerFrequence)
+#define MOD_5MN         (uint32_t)((5*60*1000)/timerFrequence)
+#define MOD_30MN        (uint32_t)((30*60*1000)/timerFrequence)
+#define MOD_1H          (uint32_t)((60*60*1000)/timerFrequence)
+#define MOD_24H         (uint32_t)((24*60*60*1000)/timerFrequence)
 
 
 

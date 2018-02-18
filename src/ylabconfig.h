@@ -5,7 +5,8 @@
 #define MODULE_UPDATE_LOGIN "leheros"
 #define MODULE_UPDATE_PASS "leheros1097"
 #define HIDDEN_KEY "*****"
-#define MODULE_AP_WPA ((const char *)"testWPA1097")
+#define MODULE_AP_WPA ((const char *)"leheros1097")
+
 
 #ifdef MCPOC_TEST
 
@@ -26,6 +27,17 @@
 #define CURRENT_MDNS          ((const char *)"currentD")
 #define CURRENT_MDNS_AP       ((const char *)"currentDAP")
 #define CURRENT_IP            192,168,0,121
+/* RONFLEUR MODULE*/
+#define SNORER_NAME          ((const char *)"ronfleur-debug")
+#define SNORER_MDNS          ((const char *)"ronfleurD")
+#define SNORER_MDNS_AP       ((const char *)"ronfleurDAP")
+#define SNORER_IP            192,168,0,131
+
+/* CURRENT MODULE*/
+#define CURRENT_GARAGE_NAME          ((const char *)"currentGar-debug")
+#define CURRENT_GARAGE_MDNS          ((const char *)"currentGarD")
+#define CURRENT_GARAGE_MDNS_AP       ((const char *)"currentGarDAP")
+#define CURRENT_GARAGE_IP            192,168,0,141
 
 #else
 
@@ -45,10 +57,23 @@
 #define CURRENT_MDNS_AP       ((const char *)"currentAP")
 #define CURRENT_IP            192,168,0,120
 
+/* RONFLEUR MODULE*/
+#define SNORER_NAME          ((const char *)"ronfleur")
+#define SNORER_MDNS          ((const char *)"ronfleur")
+#define SNORER_MDNS_AP       ((const char *)"ronfleurAP")
+#define SNORER_IP            192,168,0,130
+/* CURRENT MODULE*/
+#define CURRENT_GARAGE_NAME          ((const char *)"currentGar")
+#define CURRENT_GARAGE_MDNS          ((const char *)"currentGar")
+#define CURRENT_GARAGE_MDNS_AP       ((const char *)"currentGarAP")
+#define CURRENT_GARAGE_IP            192,168,0,140
+
 #endif
 
 #define VMC_METEO_IP_PROD             "192.168.0.110"
 #define CURRENT_IP_PROD               "192.168.0.120"
+#define SNORER_IP_PROD                "192.168.0.130"
+#define CURRENT_GARAGE_IP_PROD        "192.168.0.140"
 #define MATRIX_DISPLAY_IP_PROD        "192.168.0.100"
 
 #endif

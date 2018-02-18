@@ -29,8 +29,8 @@ void HourManager::onWifiDeConnectonEvent(WiFiEventStationModeGotIP ipInfo){
 
 
 boolean  HourManager::isNextDay() {
-   if (day(NTP.getTime())!=m_today) {
-     m_today = day(NTP.getTime());
+   if (day()!=m_today) {
+     m_today = day();
      return true;
    }
    return false;

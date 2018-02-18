@@ -40,9 +40,9 @@ class WifiManager  : public BaseManager
     HourManager *getHourManager() {return _hrManager;} ;
     ESP8266WebServer *getServer(){return _server;};
 
-    WifiManager(const uint8 pinLed, ESP8266WebServer *_server, BaseSettingManager *_smManager);
+    /*WifiManager(const uint8 pinLed, ESP8266WebServer *_server, BaseSettingManager *_smManager);
     wl_status_t begin(char *ssid, char *pass,
-        IPAddress ip, const char *MODULE_NAME, const char *MODULE_MDNS, const char *MODULE_MDNS_AP);
+        IPAddress ip, const char *MODULE_NAME, const char *MODULE_MDNS, const char *MODULE_MDNS_AP);*/
 
     void handleClient();
 
@@ -57,6 +57,7 @@ class WifiManager  : public BaseManager
     void displayCredentialCollection();
     void setCredential();
     void clearMemory();
+    void wifiReset();
 
   private:
     wl_status_t connecting(char *ssid, char *pass);

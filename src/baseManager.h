@@ -53,9 +53,14 @@ public:
 
   }
 
+  void clear() {
+    m_minValue = MAXFLOAT;
+    m_maxValue = -1*MAXFLOAT;
+  }
+
   void set(/*float value*/) {
     float value = m_cumulValue/m_nbreMeasure;
-    DEBUGLOGF("nb mesur %d/n",m_nbreMeasure );
+    DEBUGLOGF("nb mesur %d\n",m_nbreMeasure );
     m_nbreMeasure = 0;
     m_cumulValue = 0;
     if (m_time==0)
@@ -64,12 +69,16 @@ public:
       m_trend = (100*(value - m_value))/( millis()/1000 - m_time);
     m_time  = millis()/1000;
     m_value = value;
-
+    if (m_value<m_minValue) m_minValue = m_value;
+    if (m_value>m_maxValue) m_maxValue = m_value;
   }
 
   uint32_t m_time = 0;
   float m_value = 0;
   float m_trend = 0;
+
+  float m_minValue = MAXFLOAT;
+  float m_maxValue = -1*MAXFLOAT;
 
   float  m_cumulValue = 0;
   uint8_t m_nbreMeasure = 0;
@@ -78,7 +87,9 @@ public:
 class BaseManager
 {
   public:
+    BaseManager(){;};
     BaseManager(unsigned char pinLed);
+    void setup(uint8_t pinLed){m_pinLed=pinLed;};
     void switchOn();
     void switchOff();
     void setStatus(unsigned char codeStatus, String description) {
@@ -93,6 +104,8 @@ class BaseManager
     String log(boolean bJson);
     virtual String getClassName(){ return "BaseManager";}
     unsigned long getLastUpdate(){ return m_timeStampStatus;}
+    uint8_t getStatusCode() {return m_codeStatus; };
+    String getStatusDescription() {return m_description; };
   private:
     unsigned char m_pinLed;
     unsigned long m_timeStampStatus;

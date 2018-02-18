@@ -18,8 +18,6 @@ void WifiManager::restartESP() {
 void WifiManager::displayCredentialCollection() {
 	//digitalWrite ( pinLed, LOW );
 
-  char temp[400];
-
   String message =  "<html>\
     <head>\
       <title>Credentials page</title>\
@@ -48,7 +46,7 @@ void WifiManager::displayCredentialCollection() {
   message += "<form method='get' action='set'>";
   message += "<label>SSID:</label><input name='ssid' test length=32 value=\""+String(_basesmManager->m_ssid) +"\"><br>";
   message += "<label>Pass:</label><input name='pass' length=64 value=\""+String(HIDDEN_KEY) +"\"><br>";
-  message += "<label>PrivateKey:</label><input name='privateKey' length=64 value=\""+String(HIDDEN_KEY) +"\"><br>";
+  message += "<label>Channel number:</label><input name='privateKey' length=64 value=\""+String(HIDDEN_KEY) +"\"><br>";
   message += "<label>PublicKey:</label><input name='publicKey' length=64 value=\""+String(_basesmManager->m_publicKey) +"\"><br>";
   message += "<input type='submit'></form>";
   message += "</body></html>";
@@ -79,7 +77,13 @@ void WifiManager::setCredential(){
 
 void WifiManager::clearMemory(){
   _basesmManager->clearData();
-  _server->send ( 200, "text/html", "ok");
+  _server->send ( 200, "text/html", "data cleared");
+}
+
+void WifiManager::wifiReset(){
+  _server->send ( 200, "text/html", "reseting...");
+  WiFi.disconnect();
+  restartESP();
 }
 
 
@@ -95,15 +99,17 @@ wl_status_t WifiManager::begin( IPAddress ip, const char *MODULE_NAME, const cha
     Serial.println("connected");
     setStatus(WiFi.status(), "ssid");
     _hrManager->begin("pool.ntp.org", 1, true);
+    WiFi.softAP(MODULE_MDNS,MODULE_AP_WPA,1,true);
   } else {
     Serial.println("Not connected");
     connectAP(MODULE_MDNS_AP);
     setStatus(WiFi.status(), "ap");
+    WiFi.softAP(MODULE_MDNS_AP,MODULE_AP_WPA);
     _server->on ( "/", std::bind(&WifiManager::displayCredentialCollection, this) );
     _server->onNotFound ( std::bind(&WifiManager::displayCredentialCollection, this) );
   }
 
-  WiFi.softAP(MODULE_MDNS);
+
   MDNS.begin (MODULE_MDNS);
   MDNS.addService("http", "tcp", 80);
 
@@ -116,6 +122,7 @@ wl_status_t WifiManager::begin( IPAddress ip, const char *MODULE_NAME, const cha
   _server->on ( "/restart", std::bind(&WifiManager::restartESP, this) );
   _server->on ( "/set", std::bind(&WifiManager::setCredential, this) );
   _server->on ( "/credential", std::bind(&WifiManager::displayCredentialCollection, this) );
+  _server->on ( "/reset", std::bind(&WifiManager::wifiReset, this) );
 
   _httpUpdater.setup(_server, ((const char *)"/firmware"), MODULE_UPDATE_LOGIN, MODULE_UPDATE_PASS);
 
@@ -132,30 +139,28 @@ void WifiManager::handleClient() {
 
 }
 
-WifiManager::WifiManager(unsigned char pinLed, ESP8266WebServer *_server, BaseSettingManager *_smManager) : BaseManager(pinLed){
+/*WifiManager::WifiManager(unsigned char pinLed, ESP8266WebServer *_server, BaseSettingManager *_smManager) : BaseManager(pinLed){
   _server = _server;
   _basesmManager = _smManager;
-}
+}*/
 
 
-wl_status_t WifiManager::begin(char *ssid, char *pass,
+/*wl_status_t WifiManager::begin(char *ssid, char *pass,
   IPAddress ip, const char *MODULE_NAME, const char *MODULE_MDNS, const char *MODULE_MDNS_AP){
   wl_status_t connection = connectSSID(ssid,pass,ip, MODULE_MDNS );
   if (connection==WL_CONNECTED) {
     Serial.println("connected");
     setStatus(WiFi.status(), "ssid");
-    /*server->on ( "/", dataSummaryPage );
-    server->onNotFound ( dataSummaryPage );*/
-    //hrManager.begin("pool.ntp.org", 1, true);
   } else {
     Serial.println("Not connected");
     connectAP(MODULE_MDNS_AP); // std::bind(&myClass::handleRoot, this)
     setStatus(WiFi.status(), "ap");
     _server->on ( "/", std::bind(&WifiManager::displayCredentialCollection, this) );
     _server->onNotFound ( std::bind(&WifiManager::displayCredentialCollection, this) );
+    WiFi.softAP(MODULE_MDNS);
   }
 
-  WiFi.softAP(MODULE_MDNS);
+
   MDNS.begin (MODULE_MDNS);
   MDNS.addService("http", "tcp", 80);
 
@@ -173,7 +178,7 @@ wl_status_t WifiManager::begin(char *ssid, char *pass,
 
   _server->begin();
   return connection;
-}
+}*/
 
 
 String WifiManager::toString(boolean bJson = STD_TEXT){
