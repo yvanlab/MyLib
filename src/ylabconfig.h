@@ -39,6 +39,13 @@
 #define CURRENT_GARAGE_MDNS_AP       ((const char *)"currentGarDAP")
 #define CURRENT_GARAGE_IP            192,168,0,141
 
+/* VOICE MODULE*/
+#define VOICE_NAME          ((const char *)"voice-debug")
+#define VOICE_MDNS          ((const char *)"voiceD")
+#define VOICE_MDNS_AP       ((const char *)"voiceDAP")
+#define VOICE_IP            192,168,0,146
+
+
 #else
 
 /* MATRIX DISPLAY MODULE*/
@@ -67,6 +74,13 @@
 #define CURRENT_GARAGE_MDNS          ((const char *)"currentGar")
 #define CURRENT_GARAGE_MDNS_AP       ((const char *)"currentGarAP")
 #define CURRENT_GARAGE_IP            192,168,0,140
+
+/* VOICE MODULE*/
+#define VOICE_NAME          ((const char *)"voice")
+#define VOICE_MDNS          ((const char *)"voice")
+#define VOICE_MDNS_AP       ((const char *)"voiceAP")
+#define VOICE_IP            192,168,0,145
+
 
 #endif
 
