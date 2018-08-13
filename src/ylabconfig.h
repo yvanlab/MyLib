@@ -45,6 +45,19 @@
 #define VOICE_MDNS_AP       ((const char *)"voiceDAP")
 #define VOICE_IP            192,168,0,146
 
+/* LAPORTE MODULE*/
+#define LAPORTE_NAME          ((const char *)"laporte-debug")
+#define LAPORTE_MDNS          ((const char *)"laporteD")
+#define LAPORTE_MDNS_AP       ((const char *)"laporteDAP")
+#define LAPORTE_IP            192,168,0,151/* LAPORTE MODULE*/
+
+/* LAPORTE MODULE*/
+#define LAPORTE_SONOR_NAME          ((const char *)"laporteSonor-debug")
+#define LAPORTE_SONOR_MDNS          ((const char *)"laporteSonorD")
+#define LAPORTE_SONOR_MDNS_AP       ((const char *)"laporteSonorDAP")
+#define LAPORTE_SONOR_IP            192,168,0,156
+
+
 
 #else
 
@@ -81,6 +94,18 @@
 #define VOICE_MDNS_AP       ((const char *)"voiceAP")
 #define VOICE_IP            192,168,0,145
 
+/* LAPORTE MODULE*/
+#define LAPORTE_NAME          ((const char *)"laporte")
+#define LAPORTE_MDNS          ((const char *)"laporte")
+#define LAPORTE_MDNS_AP       ((const char *)"laporteAP")
+#define LAPORTE_IP            192,168,0,150
+
+/* LAPORTE MODULE*/
+#define LAPORTE_SONOR_NAME          ((const char *)"laporteSonor-debug")
+#define LAPORTE_SONOR_MDNS          ((const char *)"laporteSonorD")
+#define LAPORTE_SONOR_MDNS_AP       ((const char *)"laporteSonorDAP")
+#define LAPORTE_SONOR_IP            192,168,0,155
+
 
 #endif
 
@@ -88,6 +113,8 @@
 #define CURRENT_IP_PROD               "192.168.0.120"
 #define SNORER_IP_PROD                "192.168.0.130"
 #define CURRENT_GARAGE_IP_PROD        "192.168.0.140"
+#define VOICE_IP_PROD                 "192.168.0.145"
 #define MATRIX_DISPLAY_IP_PROD        "192.168.0.100"
+#define LAPORTE_SONOR_IP_PROD          "192,168,0,155"
 
 #endif

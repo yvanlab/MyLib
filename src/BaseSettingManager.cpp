@@ -35,6 +35,7 @@ uint8_t BaseSettingManager::readData(){
   readEEPROM(m_publicKey,64);
   //setStatus(millis(), m_iEEprom, "read");
   switchOff();
+  return m_iEEprom;
 }
 uint8_t BaseSettingManager::writeData(){
   switchOn();
@@ -47,6 +48,7 @@ uint8_t BaseSettingManager::writeData(){
   EEPROM.commit();
   setStatus( m_iEEprom, "written");
   switchOff();
+  return m_iEEprom;
 }
 
 uint8_t BaseSettingManager::clearData(){
@@ -56,6 +58,7 @@ uint8_t BaseSettingManager::clearData(){
   }
   EEPROM.commit();
   switchOff();
+  return m_iEEprom;
 }
 
 uint8_t BaseSettingManager::writeEEPROM(int16_t value){
@@ -105,5 +108,6 @@ char *BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
     iString++;
     //delay(50);
   }
+  return str;
 
 }

@@ -99,7 +99,11 @@ wl_status_t WifiManager::begin( IPAddress ip, const char *MODULE_NAME, const cha
     Serial.println("connected");
     setStatus(WiFi.status(), "ssid");
     _hrManager->begin("pool.ntp.org", 1, true);
+    #ifdef MCPOC_TEST
+    WiFi.softAP(MODULE_MDNS,MODULE_AP_WPA);
+    #else
     WiFi.softAP(MODULE_MDNS,MODULE_AP_WPA,1,true);
+    #endif
   } else {
     Serial.println("Not connected");
     connectAP(MODULE_MDNS_AP);
@@ -125,6 +129,9 @@ wl_status_t WifiManager::begin( IPAddress ip, const char *MODULE_NAME, const cha
   _server->on ( "/reset", std::bind(&WifiManager::wifiReset, this) );
 
   _httpUpdater.setup(_server, ((const char *)"/firmware"), MODULE_UPDATE_LOGIN, MODULE_UPDATE_PASS);
+  #ifdef OTA_FOR_ATOM
+  setOTAForAtom();
+  #endif
 
   _server->begin();
   return connection;
@@ -136,49 +143,12 @@ void WifiManager::handleClient() {
   #ifdef MCPOC_TELNET
   Debug.handle();
   #endif
+  #ifdef OTA_FOR_ATOM
+  ArduinoOTA.handle();
+  #endif
 
 }
 
-/*WifiManager::WifiManager(unsigned char pinLed, ESP8266WebServer *_server, BaseSettingManager *_smManager) : BaseManager(pinLed){
-  _server = _server;
-  _basesmManager = _smManager;
-}*/
-
-
-/*wl_status_t WifiManager::begin(char *ssid, char *pass,
-  IPAddress ip, const char *MODULE_NAME, const char *MODULE_MDNS, const char *MODULE_MDNS_AP){
-  wl_status_t connection = connectSSID(ssid,pass,ip, MODULE_MDNS );
-  if (connection==WL_CONNECTED) {
-    Serial.println("connected");
-    setStatus(WiFi.status(), "ssid");
-  } else {
-    Serial.println("Not connected");
-    connectAP(MODULE_MDNS_AP); // std::bind(&myClass::handleRoot, this)
-    setStatus(WiFi.status(), "ap");
-    _server->on ( "/", std::bind(&WifiManager::displayCredentialCollection, this) );
-    _server->onNotFound ( std::bind(&WifiManager::displayCredentialCollection, this) );
-    WiFi.softAP(MODULE_MDNS);
-  }
-
-
-  MDNS.begin (MODULE_MDNS);
-  MDNS.addService("http", "tcp", 80);
-
-  #ifdef MCPOC_TELNET
-  MDNS.addService("telnet", "tcp", 23); // Telnet server RemoteDebug
-  #endif
-
-  WiFi.hostname(MODULE_NAME);
-  _server->on ( "/clear", std::bind(&WifiManager::clearMemory, this) );
-  _server->on ( "/restart", std::bind(&WifiManager::restartESP, this) );
-  _server->on ( "/set", std::bind(&WifiManager::setCredential, this) );
-  _server->on ( "/credential", std::bind(&WifiManager::displayCredentialCollection, this) );
-
-  _httpUpdater.setup(_server, ((const char *)"/firmware"), MODULE_UPDATE_LOGIN, MODULE_UPDATE_PASS);
-
-  _server->begin();
-  return connection;
-}*/
 
 
 String WifiManager::toString(boolean bJson = STD_TEXT){
@@ -231,8 +201,44 @@ unsigned char WifiManager::connectAP(const char *MDNS_LABEL){
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
   delay(100);
-  /*WiFi.softAP(MDNS_LABEL);
-  MDNS.begin ( MDNS_LABEL);//, WiFi.softAPIP() );
-  MDNS.addService("http", "tcp", 80);*/
   return WiFi.status();
 }
+
+#ifdef OTA_FOR_ATOM
+void WifiManager::setOTAForAtom() {
+  Serial.println(F("ArduinoOTA conf"));
+  ArduinoOTA.onStart([]() {
+      String type;
+      if (ArduinoOTA.getCommand() == U_FLASH) {
+        type = "sketch";
+      } else { // U_SPIFFS
+        type = "filesystem";
+      }
+
+      // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+      Serial.println("Start updating " + type);
+    });
+    ArduinoOTA.onEnd([]() {
+      Serial.println("\nEnd");
+    });
+    ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    });
+    ArduinoOTA.onError([](ota_error_t error) {
+      Serial.printf("Error[%u]: ", error);
+      if (error == OTA_AUTH_ERROR) {
+        Serial.println(F("Auth Failed"));
+      } else if (error == OTA_BEGIN_ERROR) {
+        Serial.println(F("Begin Failed"));
+      } else if (error == OTA_CONNECT_ERROR) {
+        Serial.println(F("Connect Failed"));
+      } else if (error == OTA_RECEIVE_ERROR) {
+        Serial.println(F("Receive Failed"));
+      } else if (error == OTA_END_ERROR) {
+        Serial.println(F("End Failed"));
+      }
+    });
+    ArduinoOTA.begin();
+    Serial.println(F("ArduinoOTA Ready"));
+}
+#endif

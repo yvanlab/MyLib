@@ -73,6 +73,17 @@ class MyTimer : public BaseManager
     boolean isCustomFrequence() {return frequence&PERIOD_CUSTOM;}
 
     void setCustomMS(uint32_t customMS) {MOD_custom = customMS/timerFrequence;};
+
+    void initTimeOut() {timeOutRef = millis();};
+    boolean isTimeOut(uint16_t maxTimeOutMS) {
+      return (millis()-timeOutRef) > maxTimeOutMS;
+    }
+
+    void onTimerAction(std::function<void()> timerAction){
+      m_callBack = timerAction;
+    };
+    //void onTimerAction(void (*timerAction)(void *));
+
     void clearPeriod(){period=0;}
 
     String getClassName(){return "MyTimer";}
@@ -81,6 +92,11 @@ class MyTimer : public BaseManager
     uint8_t frequence = 0;
     uint32_t periodCPT = 0;
     uint32_t MOD_custom = 0;
+
+    uint32_t timeOutRef = 0;
+
+    std::function<void()> m_callBack = 0;
+
   private:
 
 

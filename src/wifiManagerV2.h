@@ -23,6 +23,11 @@
 #include <ESP8266HTTPUpdateServer.h>
 #include <HourManager.h>
 
+#ifdef OTA_FOR_ATOM
+#include <WiFiUdp.h>
+#include <ArduinoOTA.h>
+#endif
+
 extern "C" {
   #include "user_interface.h"
 }
@@ -40,10 +45,6 @@ class WifiManager  : public BaseManager
     HourManager *getHourManager() {return _hrManager;} ;
     ESP8266WebServer *getServer(){return _server;};
 
-    /*WifiManager(const uint8 pinLed, ESP8266WebServer *_server, BaseSettingManager *_smManager);
-    wl_status_t begin(char *ssid, char *pass,
-        IPAddress ip, const char *MODULE_NAME, const char *MODULE_MDNS, const char *MODULE_MDNS_AP);*/
-
     void handleClient();
 
     String toString(boolean bJson);
@@ -58,6 +59,10 @@ class WifiManager  : public BaseManager
     void setCredential();
     void clearMemory();
     void wifiReset();
+
+    #ifdef OTA_FOR_ATOM
+    void setOTAForAtom();
+    #endif
 
   private:
     wl_status_t connecting(char *ssid, char *pass);
