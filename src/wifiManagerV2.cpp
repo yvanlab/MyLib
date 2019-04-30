@@ -1,5 +1,6 @@
 
 #include "WifiManagerV2.h"
+//V1.0
 
 //#include <WiFiClient.h>
 //#include "context.h"
@@ -188,7 +189,10 @@ wl_status_t WifiManager::connectSSID(char *ssid, char *pass, IPAddress ip, const
 
   IPAddress gateway(192,168,0,254);          // IP address of the router
   IPAddress subnet(255,255,255,0);
-  WiFi.config(ip, gateway, subnet);
+  IPAddress dns(8, 8, 4, 4);
+  WiFi.setSleepMode(WIFI_NONE_SLEEP);
+  WiFi.mode(WIFI_AP_STA);
+  WiFi.config(ip, gateway, subnet, dns);
   Serial.println ( "" );
   switchOn();
   if (connecting ((char*)"",(char*)"") != WL_CONNECTED)
