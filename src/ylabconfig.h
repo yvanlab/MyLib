@@ -57,7 +57,11 @@
 #define LAPORTE_SONOR_MDNS_AP       ((const char *)"laporteSonorDAP")
 #define LAPORTE_SONOR_IP            192,168,0,156
 
-
+/* ROBOT_PISCINE MODULE*/
+#define ROBOT_PISCINE_NAME     ((const char *)"robot-debug")
+#define ROBOT_PISCINE_MDNS     ((const char *)"robotD")
+#define ROBOT_PISCINE_MDNS_AP  ((const char *)"robotDAP")
+#define ROBOT_PISCINE_IP       192,168,0,161
 
 #else
 
@@ -101,11 +105,16 @@
 #define LAPORTE_IP            192,168,0,150
 
 /* LAPORTE MODULE*/
-#define LAPORTE_SONOR_NAME          ((const char *)"laporteSonor-debug")
-#define LAPORTE_SONOR_MDNS          ((const char *)"laporteSonorD")
-#define LAPORTE_SONOR_MDNS_AP       ((const char *)"laporteSonorDAP")
+#define LAPORTE_SONOR_NAME          ((const char *)"laporteSonor")
+#define LAPORTE_SONOR_MDNS          ((const char *)"laporteSonor")
+#define LAPORTE_SONOR_MDNS_AP       ((const char *)"laporteSonorAP")
 #define LAPORTE_SONOR_IP            192,168,0,155
 
+/* ROBOT_PISCINE MODULE*/
+#define ROBOT_PISCINE_NAME     ((const char *)"robot")
+#define ROBOT_PISCINE_MDNS     ((const char *)"robot")
+#define ROBOT_PISCINE_MDNS_AP  ((const char *)"robotAP")
+#define ROBOT_PISCINE_IP       192,168,0,160
 
 #endif
 
@@ -115,6 +124,7 @@
 #define CURRENT_GARAGE_IP_PROD        "192.168.0.140"
 #define VOICE_IP_PROD                 "192.168.0.145"
 #define MATRIX_DISPLAY_IP_PROD        "192.168.0.100"
-#define LAPORTE_SONOR_IP_PROD          "192,168,0,155"
+#define LAPORTE_SONOR_IP_PROD         "192,168,0,155"
+#define ROBOT_PISCINE_IP_PROD         "192,168,0,160"
 
 #endif

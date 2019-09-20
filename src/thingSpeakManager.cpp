@@ -10,7 +10,7 @@
 
 thingSpeakManager::thingSpeakManager( unsigned char pinLed) : BaseManager(pinLed)  {
   m_index  = 0;
-  ThingSpeak.begin(m_client,"api.thingspeak.com", 80);
+  ThingSpeak.begin(m_client);
 }
 
 void thingSpeakManager::addVariable(uint8_t index, String value) {
