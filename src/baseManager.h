@@ -36,8 +36,15 @@ extern RemoteDebug Debug;
 #endif
 
 #ifdef MCPOC_TEST
-#define DEBUGLOG(...) DBG_PORT.println(__VA_ARGS__)
+
+#ifdef ESP32
+#define DEBUGLOG(...)  DBG_PORT.printf("[%d]",xPortGetCoreID());  DBG_PORT.println(__VA_ARGS__)
+#define DEBUGLOGF(...) DBG_PORT.printf("[%d]",xPortGetCoreID());  DBG_PORT.printf(__VA_ARGS__)
+#else
+#define DEBUGLOG(...)  DBG_PORT.println(__VA_ARGS__)
 #define DEBUGLOGF(...) DBG_PORT.printf(__VA_ARGS__)
+#endif
+
 #else
 #define DEBUGLOG(...)
 #define DEBUGLOGF(...)
@@ -54,8 +61,8 @@ public:
   }
 
   void clear() {
-    m_minValue = MAXFLOAT;
-    m_maxValue = -1*MAXFLOAT;
+    m_minValue = 100000.0;
+    m_maxValue = -100000.0;
   }
 
   void set(/*float value*/) {
@@ -77,8 +84,8 @@ public:
   float m_value = 0;
   float m_trend = 0;
 
-  float m_minValue = MAXFLOAT;
-  float m_maxValue = -1*MAXFLOAT;
+  float m_minValue = +100000.0;
+  float m_maxValue = -1*100000.0;
 
   float  m_cumulValue = 0;
   uint8_t m_nbreMeasure = 0;

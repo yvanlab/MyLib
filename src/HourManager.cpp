@@ -15,27 +15,34 @@ HourManager::HourManager(unsigned int localPort, unsigned char pinLed) : BaseMan
 	//WiFi.onStationModeDisconnected(std::bind(&HourManager::onWifiDeConnectonEvent, this,_1));
 }
 
-void HourManager::onWifiConnectonEvent(WiFiEventStationModeGotIP ipInfo) {
-  DEBUGLOG("Got IP:");
-  NTP.begin("pool.ntp.org", 1, true);
-  NTP.setInterval(63);
-
-}
-void HourManager::onWifiDeConnectonEvent(WiFiEventStationModeGotIP ipInfo){
-  DEBUGLOG("+++++++++++++++++++++Disconnected from SSID");
-  //DEBUGLOGf("Reason: %d\n", WiFi.reason);
-
-}
 
 
 boolean  HourManager::isNextDay() {
-   if (day()!=m_today) {
-     m_today = day();
-     return true;
-   }
-   return false;
+	if (!m_hourSynchronised)
+			return false;
+
+		if (m_currentDay> 0 && day() != m_currentDay) {
+			m_currentDay = day();
+			return true;
+		}
+		return false;
 }
 
+boolean HourManager::isNextHour() {
+	if (m_currentHour>=0 && day() != m_currentHour) {
+		m_currentHour = hour();
+		return true;
+	}
+	return false;
+}
+
+boolean HourManager::isNextMinute() {
+	if (m_currentMinute>=0 && minute() != m_currentMinute) {
+		m_currentMinute = minute();
+		return true;
+	}
+	return false;
+}
 
 String HourManager::toDTString(boolean bJson) {
   if (bJson==STD_TEXT) {
@@ -52,17 +59,6 @@ String HourManager::toUTString(){
   //return "";
 }
 
-bool HourManager::begin(String ntpServerName, int timeOffset, bool daylight) {
-  //std::bind(&MyClass::Callback, this, _1)
-  NTP.onNTPSyncEvent(std::bind(&HourManager::NTPsyncEvent, this,_1));
-  /*WiFi.onStationModeGotIP(std::bind(&HourManager::onWifiConnectonEvent, this,_1));
-  WiFi.onStationModeDisconnected(std::bind(&HourManager::onWifiDeConnectonEvent, this,_1));*/
-  //DEBUGLOGf("Got IP: %s\r\n", WiFI.ip.toString().c_str());
-  NTP.begin(ntpServerName, timeOffset, daylight);
-  NTP.setInterval(60*60); //every hour
-
-  return true;
-}
 
 void HourManager::NTPsyncEvent(NTPSyncEvent_t ntpEvent) {
   if (ntpEvent) {
@@ -77,8 +73,29 @@ void HourManager::NTPsyncEvent(NTPSyncEvent_t ntpEvent) {
     }
   }
   else {
-    DEBUGLOG("**Got NTP time: ");
-    setStatus(0, "Synchronised");
-    DEBUGLOG(NTP.getTimeDateString(NTP.getLastNTPSync()));
-  }
+		DEBUGLOG("**Got NTP time: ");
+		setStatus(0, "Synchronised");
+		DEBUGLOG(NTP.getTimeDateString(NTP.getLastNTPSync()));
+		m_hourSynchronised = true;
+		m_currentDay = day();
+		m_currentHour = hour();
+		m_currentMinute = minute();
+	}
+}
+
+
+bool HourManager::begin(String ntpServerName, int timeOffset, bool daylight) {
+
+#ifdef ESP8266
+  NTP.onNTPSyncEvent(std::bind(&HourManager::NTPsyncEvent, this,_1));
+#endif
+#ifdef ESP32
+  //NTP.onNTPSyncEvent(std::bind(&HourManager::NTPsyncEvent, this,_1));
+  NTP.onNTPSyncEvent(std::bind(&HourManager::NTPsyncEvent, this, std::placeholders::_1));
+#endif
+
+  NTP.begin(ntpServerName, timeOffset, daylight);
+  NTP.setInterval(60*60); //every hour
+
+  return true;
 }

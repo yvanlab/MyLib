@@ -16,13 +16,18 @@ SensorBase::SensorBase(uint8_t pinLed)
 
 String SensorBase::toString(boolean bJson) {
   //return F("To be done");
-  if (bJson==JSON_TEXT)
+  if (bJson==JSON_TEXT) {
+	/*  DEBUGLOG("\"value\":\""+String (getLastValue()));
+  DEBUGLOG("\", \"trend\":\"" + String(getTrend()));
+  DEBUGLOG("\", \"minValue\":\"" + String(getLastMinValue()));
+  DEBUGLOG("\", \"maxValue\":\"" + String(getLastMaxValue()));
+return "";*/
     return  "\"value\":\""+String (getLastValue()) +
             "\", \"trend\":\"" + String(getTrend())+
             "\", \"minValue\":\"" + String(getLastMinValue())+
             "\", \"maxValue\":\"" + String(getLastMaxValue())+
             "\"";
-  else {
+  }else {
     return "Measure  average[" + String (getAverage()) + "] - sampling["+String (m_capteurValue.m_nbreMeasure) + "] - Cumul[" + String (m_capteurValue.m_cumulValue) + "]";
   }
 }

@@ -13,8 +13,9 @@
 
 #endif
 
-#include <EEPROM.h>
+
 #include "BaseManager.h"
+#include <EEPROM.h>
 
 class BaseSettingManager : public BaseManager
 {
@@ -26,18 +27,20 @@ class BaseSettingManager : public BaseManager
 
     BaseSettingManager(unsigned char pinLed);
     String toString(boolean bJson);
-    unsigned char readData();
-    unsigned char writeData();
-    unsigned char clearData();
+    virtual unsigned char readData();
+    virtual unsigned char writeData();
+    virtual unsigned char clearData();
     String getClassName(){return "BaseSettingManager";}
   protected:
-    uint8_t writeEEPROM(int16_t value);
+    uint8_t writeEEPROM(int32_t value);
+    //uint8_t writeEEPROM(int16_t value);
     uint8_t writeEEPROM(char *str);
     char* readEEPROM(char *str,uint8_t maxChar);
-    int16_t readEEPROM();
+    //int16_t readEEPROM();
+    int32_t readEEPROM();
     uint8_t m_version = 0;
-  private:
-    int m_iEEprom = 0;
+  protected:
+    int16_t m_iEEprom = 0;
 
 
 };

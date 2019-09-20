@@ -23,6 +23,11 @@ public:
 		m_endMS = millis()+delayMS;
 	}
 
+	uint32_t getRemaining(){
+		if (isDone()) return 0;
+		return m_endMS - millis();
+	}
+
 	bool isDone() {return millis() > m_endMS;}
 
 protected:

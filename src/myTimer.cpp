@@ -11,15 +11,26 @@
 
 MyTimer mtTimer(0);
 
-MyTimer::MyTimer(unsigned char pinLed) : BaseManager(pinLed){
+
+#ifdef ESP32
+extern portMUX_TYPE 		wtimerMux;// = portMUX_INITIALIZER_UNLOCKED;
+#endif
+
+MyTimer::MyTimer(unsigned char pinLed) /*: BaseManager(pinLed)*/{
 
 }
 
 /*String MyTimer::toString(boolean bJson = false){
   return "Period[" + String(period) + "]";
 }*/
-void  timerCallback(void *pArg) {
+#ifdef ESP32
+void IRAM_ATTR timerCallback() {
     //uint32 start = millis();
+	portENTER_CRITICAL_ISR(&wtimerMux);
+#endif
+#ifdef ESP8266
+	void timerCallback(void *pArg) {
+#endif
      mtTimer.periodCPT++;
 
      //DEBUGLOG(mtTimer.periodCPT);
@@ -31,15 +42,23 @@ void  timerCallback(void *pArg) {
      if ((mtTimer.periodCPT % MOD_5MN) == 0)     {mtTimer.period |= PERIOD_5MN  ;mtTimer.frequence ^= PERIOD_5MN;}
      if ((mtTimer.periodCPT % MOD_30MN) == 0)    {mtTimer.period |= PERIOD_30MN ;mtTimer.frequence ^= PERIOD_30MN;}
      if ((mtTimer.periodCPT % mtTimer.MOD_custom) == 0)  {mtTimer.period |= PERIOD_CUSTOM;mtTimer.frequence ^= PERIOD_CUSTOM;}
-     if (mtTimer.m_callBack) {
-       //DEBUGLOG("call cb ");
-       mtTimer.m_callBack();
-     }
-     /*uint32 end = millis();
-     Serial.printf("%d\n", end-start );*/
+#ifdef ESP32
+    portEXIT_CRITICAL_ISR(&wtimerMux);
+#endif
+
 } // End of timerCallback
 
 void MyTimer::begin(uint32_t freqMS){
+#ifdef ESP8266
   os_timer_setfn(&myTimer,timerCallback, NULL);
   os_timer_arm(&myTimer, freqMS, true);
+#endif
+
+#ifdef ESP32
+  myTimer = timerBegin(0, 80, true);
+  timerAttachInterrupt(myTimer, &timerCallback, true);
+  timerAlarmWrite(myTimer, (uint64_t)timerFrequence*1000, true);
+  timerAlarmEnable(myTimer);
+#endif
+
 }

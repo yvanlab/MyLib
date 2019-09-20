@@ -1,6 +1,7 @@
 
 #include "WifiManagerV2.h"
-//V1.0
+
+//#include "httpUpdater.h"
 
 //#include <WiFiClient.h>
 //#include "context.h"
@@ -40,7 +41,13 @@ void WifiManager::displayCredentialCollection() {
       message += " (";
       message += WiFi.RSSI(i);
       message += ")";
+#ifdef ESP8266
       message += (WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*";
+#endif
+#ifdef ESP32
+      message += (WiFi.encryptionType(i) == WIFI_AUTH_OPEN) ? " " : "*";
+#endif
+
       message += "</li>";
     }
   message += "</ul>";
@@ -58,22 +65,39 @@ void WifiManager::displayCredentialCollection() {
 
 }
 
-void WifiManager::setCredential(){
+#ifdef ESP32
+ void IRAM_ATTR WifiManager::setCredential(){
+#endif
+#ifdef ESP8266
+ void  WifiManager::setCredential(){
+#endif
+#ifdef MCPOC_TEST
+  for (uint8_t i =0; i<getServer()->args();i++) {
+	  DEBUGLOGF("[%s,%s]",getServer()->argName(i).c_str(),getServer()->arg(i).c_str());
+  }
+  DEBUGLOG("");
+#endif
+
   String str = _server->arg("ssid");
+  //DEBUGLOGF("[1,%s]\n",str.c_str());
   if (str.length()>0)
     strcpy(_basesmManager->m_ssid, str.c_str());
   str = _server->arg("pass");
+  //DEBUGLOGF("[2,%s]\n",str.c_str());
   if (str.length()>0 && str != HIDDEN_KEY)
     strcpy(_basesmManager->m_password,str.c_str());
+  //DEBUGLOGF("[3,%s]\n",str.c_str());
   str = _server->arg("privateKey");
+  //DEBUGLOGF("[4,%s]\n",str.c_str());
   if (str.length()>0 && str != HIDDEN_KEY)
       strcpy(_basesmManager->m_privateKey,str.c_str());
   str = _server->arg("publicKey");
+  //DEBUGLOGF("[5,%s]\n",str.c_str());
   if (str.length()>0)
       strcpy(_basesmManager->m_publicKey,str.c_str());
   _server->send ( 200, "text/html", "data recorded.restart board");
   _basesmManager->writeData();
-  restartESP();
+  //restartESP();
 }
 
 void WifiManager::clearMemory(){
@@ -89,8 +113,13 @@ void WifiManager::wifiReset(){
 
 
 WifiManager::WifiManager(unsigned char pinLed,  BaseSettingManager *smManager) : BaseManager(pinLed){
-  _server = new ESP8266WebServer(80);
-  _hrManager = new HourManager(2390,pinLed);
+#ifdef ESP8266
+	_server = new ESP8266WebServer(80);
+#endif
+#ifdef ESP32
+	_server = new WebServer(80);
+#endif
+	_hrManager = new HourManager(2390,pinLed);
   _basesmManager = smManager;
 }
 
@@ -118,18 +147,25 @@ wl_status_t WifiManager::begin( IPAddress ip, const char *MODULE_NAME, const cha
   MDNS.begin (MODULE_MDNS);
   MDNS.addService("http", "tcp", 80);
 
-  #ifdef MCPOC_TELNET
+#ifdef MCPOC_TELNET
   MDNS.addService("telnet", "tcp", 23); // Telnet server RemoteDebug
   #endif
-
+#ifdef ESP8266
   WiFi.hostname(MODULE_NAME);
+#endif
+#ifdef ESP32
+  WiFi.setHostname(MODULE_NAME);
+#endif
   _server->on ( "/clear", std::bind(&WifiManager::clearMemory, this) );
   _server->on ( "/restart", std::bind(&WifiManager::restartESP, this) );
   _server->on ( "/set", std::bind(&WifiManager::setCredential, this) );
   _server->on ( "/credential", std::bind(&WifiManager::displayCredentialCollection, this) );
   _server->on ( "/reset", std::bind(&WifiManager::wifiReset, this) );
-
+#ifdef ESP8266
   _httpUpdater.setup(_server, ((const char *)"/firmware"), MODULE_UPDATE_LOGIN, MODULE_UPDATE_PASS);
+#else
+  initHttpUpdater();
+#endif
   #ifdef OTA_FOR_ATOM
   setOTAForAtom();
   #endif
@@ -164,9 +200,14 @@ wl_status_t WifiManager::connecting(char *ssid, char *pass) {
   if (strlen(ssid)==0) {
       if (!WiFi.SSID()) return WL_NO_SSID_AVAIL;
       Serial.println ( "Quick" );
+#ifdef ESP8266
       ETS_UART_INTR_DISABLE();
       wifi_station_disconnect();
       ETS_UART_INTR_ENABLE();
+#endif
+#ifdef ESP32
+      esp_wifi_disconnect();
+#endif
       WiFi.begin();
   } else {
     Serial.println ( "Long" );
@@ -174,7 +215,7 @@ wl_status_t WifiManager::connecting(char *ssid, char *pass) {
   }
   unsigned char inbTest = 0;
   // Wait for connection
-  while ( WiFi.status() != WL_CONNECTED && inbTest < 20) {
+  while ( WiFi.status() != WL_CONNECTED && inbTest < 10) {
       delay ( 500 );
       Serial.print ( "." );
       Serial.print (WiFi.status());
@@ -190,9 +231,9 @@ wl_status_t WifiManager::connectSSID(char *ssid, char *pass, IPAddress ip, const
   IPAddress gateway(192,168,0,254);          // IP address of the router
   IPAddress subnet(255,255,255,0);
   IPAddress dns(8, 8, 4, 4);
-  WiFi.setSleepMode(WIFI_NONE_SLEEP);
-  WiFi.mode(WIFI_AP_STA);
+
   WiFi.config(ip, gateway, subnet, dns);
+  //WiFi.config(ip, gateway, subnet);
   Serial.println ( "" );
   switchOn();
   if (connecting ((char*)"",(char*)"") != WL_CONNECTED)
@@ -207,6 +248,91 @@ unsigned char WifiManager::connectAP(const char *MDNS_LABEL){
   delay(100);
   return WiFi.status();
 }
+
+
+
+bool WifiManager::loadFromSpiffs(String path)
+{
+  DEBUGLOGF("loadFromSpiffs[%s]\n", path.c_str());
+
+ /* Serial.println("spiffs directory");
+String str = "";
+Dir dir = SPIFFS.openDir("/");
+while (dir.next()) {
+    str += dir.fileName();
+    str += " / ";
+    str += dir.fileSize();
+    str += "\r\n";
+}
+Serial.println(str);*/
+
+  if (SPIFFS.exists(path.c_str()))
+  {
+    File dataFile = SPIFFS.open(path.c_str(), "r");
+    if (_server->streamFile(dataFile, "text/html") != dataFile.size())
+    {
+      DEBUGLOGF("loadFromSpiffs pb[%s][%d]\n", dataFile.name(), dataFile.size());
+    }
+    DEBUGLOGF("loadFromSpiffs[%s][%d]\n", dataFile.name(), dataFile.size());
+    dataFile.close();
+  }
+  else
+  {
+    DEBUGLOGF("loadFromSpiffs[%s] does not exist\n", path.c_str());
+  }
+
+  return true;
+}
+
+#ifdef ESP32
+void WifiManager::httpUpdaterPage() {
+    //_server->on("/firmware", HTTP_GET, []() {
+    _server->sendHeader("Connection", "close");
+    loadFromSpiffs("/firmware.html");
+   //wfManager->getServer()->sendHeader("Location", "/robot.html",true);   //Redirige vers page index.html sur SPIFFS
+    _server->send(200, "text/html", "");
+}
+
+
+void WifiManager::initHttpUpdater() {
+  //WebServer *server = _server;
+
+  _server->on ( "/firmware", std::bind(&WifiManager::httpUpdaterPage, this) );
+
+  /*handling uploading firmware file */
+  _server->on("/update", HTTP_POST, [&]() {
+    _server->sendHeader("Connection", "close");
+    _server->send(200, "text/plain", (Update.hasError()) ? "FAIL" : "OK");
+    ESP.restart();
+  }, [&]() {
+    HTTPUpload& upload = _server->upload();
+    if (upload.status == UPLOAD_FILE_START) {
+      //Serial.printf("Update: %s\n", upload.filename.c_str());
+      int command = U_FLASH;
+      if ( upload.filename == "spiffs.bin") {
+         command = U_SPIFFS;      
+      }
+      DEBUGLOGF("Update [%s][%d]\n", upload.filename.c_str(),command);
+      if (!Update.begin(UPDATE_SIZE_UNKNOWN,command, LED_BUILTIN)) { //start with max available size
+        Update.printError(Serial);
+      }
+    } else if (upload.status == UPLOAD_FILE_WRITE) {
+      /* flashing firmware to ESP*/
+      if (Update.write(upload.buf, upload.currentSize) != upload.currentSize) {
+        Update.printError(Serial);
+      }
+    } else if (upload.status == UPLOAD_FILE_END) {
+      if (Update.end(true)) { //true to set the size to the current progress
+        DEBUGLOGF("Update Success: %u\nRebooting...\n", upload.totalSize);
+        //Serial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
+      } else {
+        Update.printError(Serial);
+      }
+    }
+  });
+ 
+}
+#endif
 
 #ifdef OTA_FOR_ATOM
 void WifiManager::setOTAForAtom() {

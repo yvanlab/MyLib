@@ -31,6 +31,7 @@ class SensorBase : public BaseManager
     float getLastMinValue() {return m_capteurValue.m_minValue;};
     float getLastMaxValue() {return m_capteurValue.m_maxValue;};
     void  clear()           {m_capteurValue.clear();};
+    void  set()           {m_capteurValue.set();};
     String getClassName()   {return "SensorBase";}
   protected:
     capteurValue  m_capteurValue;

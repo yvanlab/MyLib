@@ -15,22 +15,27 @@
 
 #include "BaseManager.h"
 
+#ifdef ESP8266
 extern "C" {
 #include "user_interface.h"
 }
+#endif
+
+#ifdef ESP32
+#include <functional>
+#endif
 
 
-
-#define PERIOD_QUICK  0b00000001
-#define PERIOD_25MS   0b00100000
-#define PERIOD_250MS  0b00000010
-#define PERIOD_1S     0b00000100
-#define PERIOD_1MN    0b00001000
-#define PERIOD_5MN    0b00010000
-#define PERIOD_30MN   0b01000000
-#define PERIOD_1H     0b00000011
-#define PERIOD_24H    0b01000010
-#define PERIOD_CUSTOM 0b10000000
+#define PERIOD_QUICK  0x001 //0b0000000000000001
+#define PERIOD_25MS   0x002 //0b0000000000000010
+#define PERIOD_250MS  0x004 //0b0000000000000100
+#define PERIOD_1S     0x008 //0b0000000000001000
+#define PERIOD_1MN    0x010 //0b0000000000010000
+#define PERIOD_5MN    0x020 //0b0000000000100000
+#define PERIOD_30MN   0x040 //0b0000000010000000
+#define PERIOD_1H     0x080 //0b0000000100000000
+#define PERIOD_24H    0x100 //0b0000001000000000
+#define PERIOD_CUSTOM 0x8000//0b1000000000000000
 
 
 #define timerFrequence  (uint32_t)5 //60000;//ms
@@ -45,7 +50,7 @@ extern "C" {
 
 
 
-class MyTimer : public BaseManager
+class MyTimer /*: public BaseManager*/
 {
   public:
     MyTimer(unsigned char pinLed);
@@ -79,15 +84,21 @@ class MyTimer : public BaseManager
       return (millis()-timeOutRef) > maxTimeOutMS;
     }
 
-    void onTimerAction(std::function<void()> timerAction){
+    /*void onTimerAction(std::function<void()> timerAction){
       m_callBack = timerAction;
-    };
+    };*/
     //void onTimerAction(void (*timerAction)(void *));
 
     void clearPeriod(){period=0;}
 
     String getClassName(){return "MyTimer";}
+#ifdef ESP8266
     os_timer_t myTimer;
+#endif
+#ifdef ESP32
+    hw_timer_t *myTimer;
+#endif
+
     uint8_t period = 0;
     uint8_t frequence = 0;
     uint32_t periodCPT = 0;
@@ -95,7 +106,7 @@ class MyTimer : public BaseManager
 
     uint32_t timeOutRef = 0;
 
-    std::function<void()> m_callBack = 0;
+    //std::function<void()> m_callBack = 0;
 
   private:
 

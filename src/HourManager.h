@@ -14,9 +14,18 @@
 #endif
 
 #include <NtpClientLib.h>
+
+#ifdef ESP8266
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <ESP8266WiFiType.h>
+#endif
+
+#ifdef ESP32
+#include <WiFi.h>
+//#include <functional>
+#endif
+
 
 #include <Wire.h>
 //#include <RTClib.h>
@@ -33,33 +42,30 @@ class HourManager : /*public NTPClient, */public BaseManager
     bool begin(String ntpServerName, int timeOffset, bool daylight);
     String toDTString(boolean bJson);
     String toUTString();
-    //static String toUTString(unsigned long epochMS);
 
-    //unsigned long  getCurrentEpoch();
     boolean  isNextDay();
+    boolean  isNextHour();
+    boolean  isNextMinute();
+    boolean  isNight() {
+        	DEBUGLOGF("hour : %d\n",hour());
+        	return hour()>18 || hour()<05;
+        }
+
+        boolean  isMorning() {
+        	return hour()>05 || hour()<12;
+        }
 
     String getClassName(){return "HourManager";}
   private:
 
     unsigned int m_localPort = 2390;      // local port to listen for UDP packets
     void NTPsyncEvent(NTPSyncEvent_t ntpEvent);
-    void onWifiConnectonEvent(WiFiEventStationModeGotIP ipInfo);
-    void onWifiDeConnectonEvent(WiFiEventStationModeGotIP ipInfo);
 
+    int8_t m_currentDay=-1;
+     int8_t m_currentHour=-1;
+     int8_t m_currentMinute=-1;
 
-    /* IPAddress timeServerIP;
-
-    byte m_packetBuffer[48];
-    WiFiUDP m_udp;*/
-
-
-    unsigned long m_epoch=0;
-    unsigned long m_timeReference=0;
-    unsigned char m_today=0;
-
-  /*unsigned long sendNTPpacket(IPAddress& address);
-    unsigned long readNTPDateHour();*/
-
+     bool m_hourSynchronised = false;
 
 };
 

@@ -16,10 +16,20 @@ BaseManager::BaseManager(unsigned char pinLed){
 }
 
 void BaseManager::switchOn(){
-  if (m_pinLed!=0) digitalWrite ( m_pinLed, LOW );
+  if (m_pinLed!=0)
+  #ifdef ESP32 
+    digitalWrite ( m_pinLed, HIGH );
+  #else
+    digitalWrite ( m_pinLed, LOW );
+  #endif
 }
 void BaseManager::switchOff(){
-  if (m_pinLed!=0) digitalWrite ( m_pinLed, HIGH );
+  if (m_pinLed!=0) 
+  #ifdef ESP32 
+    digitalWrite ( m_pinLed, LOW );
+  #else
+    digitalWrite ( m_pinLed, HIGH );
+  #endif
 }
 
 /*

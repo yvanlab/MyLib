@@ -61,9 +61,17 @@ uint8_t BaseSettingManager::clearData(){
   return m_iEEprom;
 }
 
-uint8_t BaseSettingManager::writeEEPROM(int16_t value){
+/* uint8_t BaseSettingManager::writeEEPROM(int16_t value){
   char tmp[5];
   itoa(value,tmp,16);
+  /*Serial.print(m_iEEprom);Serial.print(":");Serial.print(value);
+  Serial.print(" , "); Serial.println(tmp);
+  return writeEEPROM(tmp);
+}*/
+
+uint8_t BaseSettingManager::writeEEPROM(int32_t value){
+  char tmp[10];
+  itoa(value,tmp,32);
   /*Serial.print(m_iEEprom);Serial.print(":");Serial.print(value);
   Serial.print(" , "); Serial.println(tmp);*/
   return writeEEPROM(tmp);
@@ -82,14 +90,20 @@ uint8_t BaseSettingManager::writeEEPROM(char *str){
   return 0;
 }
 
-int16_t BaseSettingManager::readEEPROM(){
+/* int16_t BaseSettingManager::readEEPROM(){
   char tmp[8];
   readEEPROM(tmp,5);
   /*Serial.print(m_iEEprom);Serial.print(":");Serial.print(tmp);
-  Serial.print(" , "); Serial.println(strtol(tmp, NULL,16));*/
+  Serial.print(" , "); Serial.println(strtol(tmp, NULL,16));
   return strtol(tmp, NULL,16);
+}*/
 
-
+int32_t BaseSettingManager::readEEPROM(){
+  char tmp[20];
+  readEEPROM(tmp,20);
+  /*Serial.print(m_iEEprom);Serial.print(":");Serial.print(tmp);
+  Serial.print(" , "); Serial.println(strtol(tmp, NULL,16));*/
+  return strtol(tmp, NULL,32);
 }
 
 char *BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
@@ -100,9 +114,9 @@ char *BaseSettingManager::readEEPROM(char *str,uint8_t maxChar){
     //Serial.print(m_iEEprom);Serial.print(":");
     m_iEEprom++;
     if (str[iString] == 0) {
-      //DEBUGLOG("--");
+    //  DEBUGLOG("--");
       break;
-    }/*else {
+    }/* else {
       DEBUGLOG(str[iString]);
     }*/
     iString++;
