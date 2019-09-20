@@ -63,11 +63,13 @@
 #define ROBOT_PISCINE_MDNS_AP  ((const char *)"robotDAP")
 #define ROBOT_PISCINE_IP       192,168,0,161
 
+
 /* ARCADE MODULE*/
 #define ARCADE_NAME     ((const char *)"arcade-debug")
 #define ARCADE_MDNS     ((const char *)"arcadeD")
 #define ARCADE_MDNS_AP  ((const char *)"arcadeDAP")
 #define ARCADE_IP       192,168,0,166
+
 
 #else
 
@@ -122,11 +124,13 @@
 #define ROBOT_PISCINE_MDNS_AP  ((const char *)"robotAP")
 #define ROBOT_PISCINE_IP       192,168,0,160
 
+
 /* ARCADE MODULE*/
 #define ARCADE_NAME     ((const char *)"arcade")
 #define ARCADE_MDNS     ((const char *)"arcade")
 #define ARCADE_MDNS_AP  ((const char *)"arcadeAP")
 #define ARCADE_IP       192,168,0,165
+
 
 #endif
 

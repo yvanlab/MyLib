@@ -65,6 +65,7 @@ class MyTimer /*: public BaseManager*/
     boolean is1MNPeriod()   {return period&PERIOD_1MN;}
     boolean is5MNPeriod()   {return period&PERIOD_5MN;}
     boolean is30MNPeriod()  {return period&PERIOD_30MN;}
+    boolean is1HPeriod()    {return period&PERIOD_1H;}
     boolean isCustomPeriod(){return period&PERIOD_CUSTOM;}
 
 
@@ -75,6 +76,7 @@ class MyTimer /*: public BaseManager*/
     boolean is1MNFrequence()    {return frequence&PERIOD_1MN;}
     boolean is5MNFrequence()    {return frequence&PERIOD_5MN;}
     boolean is30MNFrequence()   {return frequence&PERIOD_30MN;}
+    boolean is1HFrequence()     {return frequence&PERIOD_1H;}
     boolean isCustomFrequence() {return frequence&PERIOD_CUSTOM;}
 
     void setCustomMS(uint32_t customMS) {MOD_custom = customMS/timerFrequence;};
@@ -89,11 +91,13 @@ class MyTimer /*: public BaseManager*/
     };*/
     //void onTimerAction(void (*timerAction)(void *));
 
+
     void clearPeriod(){period=0;}
 
     String getClassName(){return "MyTimer";}
 #ifdef ESP8266
     os_timer_t myTimer;
+
 #endif
 #ifdef ESP32
     hw_timer_t *myTimer;
@@ -107,6 +111,12 @@ class MyTimer /*: public BaseManager*/
     uint32_t timeOutRef = 0;
 
     //std::function<void()> m_callBack = 0;
+
+
+    uint16_t period = 0;
+    uint16_t frequence = 0;
+    uint32_t periodCPT = 0;
+    uint32_t MOD_custom = 0;
 
   private:
 

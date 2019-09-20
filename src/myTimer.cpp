@@ -23,6 +23,7 @@ MyTimer::MyTimer(unsigned char pinLed) /*: BaseManager(pinLed)*/{
 /*String MyTimer::toString(boolean bJson = false){
   return "Period[" + String(period) + "]";
 }*/
+
 #ifdef ESP32
 void IRAM_ATTR timerCallback() {
     //uint32 start = millis();
@@ -31,6 +32,8 @@ void IRAM_ATTR timerCallback() {
 #ifdef ESP8266
 	void timerCallback(void *pArg) {
 #endif
+
+void  timerCallback(void *pArg) {
      mtTimer.periodCPT++;
 
      //DEBUGLOG(mtTimer.periodCPT);
@@ -41,10 +44,13 @@ void IRAM_ATTR timerCallback() {
      if ((mtTimer.periodCPT % MOD_1MN) == 0)     {mtTimer.period |= PERIOD_1MN  ;mtTimer.frequence ^= PERIOD_1MN;}
      if ((mtTimer.periodCPT % MOD_5MN) == 0)     {mtTimer.period |= PERIOD_5MN  ;mtTimer.frequence ^= PERIOD_5MN;}
      if ((mtTimer.periodCPT % MOD_30MN) == 0)    {mtTimer.period |= PERIOD_30MN ;mtTimer.frequence ^= PERIOD_30MN;}
+     if ((mtTimer.periodCPT % MOD_1H) == 0)      {mtTimer.period |= PERIOD_1H   ;mtTimer.frequence ^= PERIOD_1H;}
      if ((mtTimer.periodCPT % mtTimer.MOD_custom) == 0)  {mtTimer.period |= PERIOD_CUSTOM;mtTimer.frequence ^= PERIOD_CUSTOM;}
+
 #ifdef ESP32
     portEXIT_CRITICAL_ISR(&wtimerMux);
 #endif
+
 
 } // End of timerCallback
 
