@@ -110,14 +110,8 @@ class MyTimer /*: public BaseManager*/
 
     uint32_t timeOutRef = 0;
 
-    //std::function<void()> m_callBack = 0;
-
-
-    uint16_t period = 0;
-    uint16_t frequence = 0;
-    uint32_t periodCPT = 0;
-    uint32_t MOD_custom = 0;
-
+    //std::function<void()> m_callBack = 0;*
+    
   private:
 
 

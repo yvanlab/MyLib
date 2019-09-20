@@ -33,7 +33,6 @@ void IRAM_ATTR timerCallback() {
 	void timerCallback(void *pArg) {
 #endif
 
-void  timerCallback(void *pArg) {
      mtTimer.periodCPT++;
 
      //DEBUGLOG(mtTimer.periodCPT);
